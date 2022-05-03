@@ -4,7 +4,8 @@ from .serializers import StatusSerializer  # Serializer based on Status Model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from rest_framework import generics
+from rest_framework import generics, mixins
+
 
 
 
@@ -60,3 +61,33 @@ class StatusDeleteAPIView(generics.DestroyAPIView):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
     lookup_field = "id"
+    
+    
+    
+# Using Mixin
+
+
+class StatusListCreateView(mixins.CreateModelMixin, generics.ListAPIView):
+
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+
+
+
+class StatusDetailAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.RetrieveAPIView):
+
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+    lookup_field = "id"
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
